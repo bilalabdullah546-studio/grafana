@@ -19,7 +19,7 @@ export function fillNullLists(spec: DashboardV2Spec): void {
   spec.variables ??= [];
   spec.elements ??= {};
 
-  fillAnnotations(spec.annotations);
+  spec.annotations = fillAnnotations(spec.annotations);
   for (const link of spec.links) {
     link.tags ??= [];
   }
@@ -32,12 +32,14 @@ export function fillNullLists(spec: DashboardV2Spec): void {
   fillLayout(spec.layout);
 }
 
-function fillAnnotations(annotations: AnnotationQueryKind[] | null = []) {
-  for (const annotation of annotations ?? []) {
+function fillAnnotations(annotations: AnnotationQueryKind[] | null = []): AnnotationQueryKind[] {
+  const normalizedAnnotations = annotations ?? [];
+  for (const annotation of normalizedAnnotations) {
     if (annotation.spec.filter) {
       annotation.spec.filter.ids ??= [];
     }
   }
+  return normalizedAnnotations;
 }
 
 function fillPanel(panel: PanelKind) {
@@ -94,7 +96,7 @@ function fillLayout(layout?: DashboardV2Spec['layout']) {
       for (const row of layout.spec.rows) {
         fillConditionalRendering(row.spec.conditionalRendering);
         row.spec.variables?.forEach(fillVariable);
-        fillAnnotations(row.spec.annotations);
+        row.spec.annotations = fillAnnotations(row.spec.annotations);
         fillLayout(row.spec.layout);
       }
       break;
@@ -103,7 +105,7 @@ function fillLayout(layout?: DashboardV2Spec['layout']) {
       for (const tab of layout.spec.tabs) {
         fillConditionalRendering(tab.spec.conditionalRendering);
         tab.spec.variables?.forEach(fillVariable);
-        fillAnnotations(tab.spec.annotations);
+        tab.spec.annotations = fillAnnotations(tab.spec.annotations);
         fillLayout(tab.spec.layout);
       }
       break;
