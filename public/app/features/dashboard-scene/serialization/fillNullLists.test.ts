@@ -61,7 +61,7 @@ const specWithNullLists = {
           spec: {
             conditionalRendering,
             variables: [{ kind: 'GroupByVariable', spec: { name: 'g', options: null } }],
-            annotations: [annotation],
+            annotations: null,
             layout: {
               kind: 'RowsLayout',
               spec: {
@@ -70,6 +70,7 @@ const specWithNullLists = {
                     kind: 'RowsLayoutRow',
                     spec: {
                       conditionalRendering,
+                      annotations: null,
                       layout: {
                         kind: 'AutoGridLayout',
                         spec: { items: [{ kind: 'AutoGridLayoutItem', spec: { conditionalRendering } }] },
