@@ -32,8 +32,8 @@ export function fillNullLists(spec: DashboardV2Spec): void {
   fillLayout(spec.layout);
 }
 
-function fillAnnotations(annotations: AnnotationQueryKind[] = []) {
-  for (const annotation of annotations) {
+function fillAnnotations(annotations: AnnotationQueryKind[] | null = []) {
+  for (const annotation of annotations ?? []) {
     if (annotation.spec.filter) {
       annotation.spec.filter.ids ??= [];
     }
