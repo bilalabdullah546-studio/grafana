@@ -125,6 +125,27 @@ describe('fillNullLists', () => {
     expect(spec.elements).toEqual({});
   });
 
+  it('preserves omitted nested annotations', () => {
+    const row = {
+      kind: 'RowsLayoutRow',
+      spec: { layout: { kind: 'GridLayout', spec: { items: [] } } },
+    };
+    const tab = {
+      kind: 'TabsLayoutTab',
+      spec: { layout: { kind: 'RowsLayout', spec: { rows: [row] } } },
+    };
+    const spec = {
+      title: 'omitted annotations',
+      timeSettings: { from: 'now-6h', to: 'now' },
+      layout: { kind: 'TabsLayout', spec: { tabs: [tab] } },
+    } as unknown as DashboardV2Spec;
+
+    fillNullLists(spec);
+
+    expect('annotations' in tab.spec).toBe(false);
+    expect('annotations' in row.spec).toBe(false);
+  });
+
   it('fills a panel that has no data or visualization config', () => {
     const spec = {
       title: 'partial',
