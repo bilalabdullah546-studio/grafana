@@ -19,7 +19,7 @@ export function fillNullLists(spec: DashboardV2Spec): void {
   spec.variables ??= [];
   spec.elements ??= {};
 
-  spec.annotations = fillAnnotations(spec.annotations);
+  fillAnnotations(spec);
   for (const link of spec.links) {
     link.tags ??= [];
   }
@@ -32,14 +32,16 @@ export function fillNullLists(spec: DashboardV2Spec): void {
   fillLayout(spec.layout);
 }
 
-function fillAnnotations(annotations: AnnotationQueryKind[] | null = []): AnnotationQueryKind[] {
-  const normalizedAnnotations = annotations ?? [];
-  for (const annotation of normalizedAnnotations) {
+function fillAnnotations(target: { annotations?: AnnotationQueryKind[] | null }) {
+  // Normalize stored nulls, but leave omitted optional annotations omitted.
+  if (target.annotations === null) {
+    target.annotations = [];
+  }
+  for (const annotation of target.annotations ?? []) {
     if (annotation.spec.filter) {
       annotation.spec.filter.ids ??= [];
     }
   }
-  return normalizedAnnotations;
 }
 
 function fillPanel(panel: PanelKind) {
@@ -96,7 +98,7 @@ function fillLayout(layout?: DashboardV2Spec['layout']) {
       for (const row of layout.spec.rows) {
         fillConditionalRendering(row.spec.conditionalRendering);
         row.spec.variables?.forEach(fillVariable);
-        row.spec.annotations = fillAnnotations(row.spec.annotations);
+        fillAnnotations(row.spec);
         fillLayout(row.spec.layout);
       }
       break;
@@ -105,7 +107,7 @@ function fillLayout(layout?: DashboardV2Spec['layout']) {
       for (const tab of layout.spec.tabs) {
         fillConditionalRendering(tab.spec.conditionalRendering);
         tab.spec.variables?.forEach(fillVariable);
-        tab.spec.annotations = fillAnnotations(tab.spec.annotations);
+        fillAnnotations(tab.spec);
         fillLayout(tab.spec.layout);
       }
       break;
